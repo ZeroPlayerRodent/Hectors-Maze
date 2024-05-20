@@ -14,6 +14,9 @@
   )
 )
 
+(defvar tickrate 16)
+(defvar last-tick 0)
+
 (defvar start-screen 1)
 
 (defvar init-width 30)
@@ -179,6 +182,7 @@ Press 3 for large maze" 175 333)
     (rect (- (* player-x 32) offset-x) (- (* player-y 32) offset-y) 32 32)
   )
   
+  (defun tick ()
   (let ((i 0))
   (loop
   (setf (wait (the-enemy)) (- (wait (the-enemy)) 1))
@@ -199,12 +203,7 @@ Press 3 for large maze" 175 333)
     (setf (wait (the-enemy)) (+(random (top (the-enemy)) (make-random-state t))20))
   )
   (when (and (= (x (the-enemy)) player-x)(= (y (the-enemy)) player-y))(setf died 1))
-  (when (and (and (>= (- (* (x (the-enemy)) 32) offset-x) 0)(<= (- (* (x (the-enemy)) 32) offset-x) 640))
-             (and (>= (- (* (y (the-enemy)) 32) offset-y) 0)(<= (- (* (y (the-enemy)) 32) offset-y) 640)))
-    (with-pen (make-pen :fill skull :stroke nil)
-      (rect (- (* (x (the-enemy)) 32) offset-x) (- (* (y (the-enemy)) 32) offset-y) 32 32)
-    )
-  )
+
   (setf i (+ i 1))
   (when (>= i (length enemies))(return))
   )
@@ -229,7 +228,13 @@ Press 3 for large maze" 175 333)
     )
   )
   (when (and (= ghost-x player-x)(= ghost-y player-y))(setf died 1))
-
+  )
+  
+  (setf last-tick (+ last-tick tickrate))
+  
+  )
+  
+  
   (when (and (and (>= (- (* ghost-x 32) offset-x) 0)(<= (- (* ghost-x 32) offset-x) 608))
              (and (>= (- (* ghost-y 32) offset-y) 0)(<= (- (* ghost-y 32) offset-y) 608)))
     (with-pen (make-pen :fill ghost :stroke nil)
@@ -237,6 +242,17 @@ Press 3 for large maze" 175 333)
     )
   )
   
+  (let ((i 0))
+  (loop
+  (when (and (and (>= (- (* (x (the-enemy)) 32) offset-x) 0)(<= (- (* (x (the-enemy)) 32) offset-x) 640))
+             (and (>= (- (* (y (the-enemy)) 32) offset-y) 0)(<= (- (* (y (the-enemy)) 32) offset-y) 640)))
+    (with-pen (make-pen :fill skull :stroke nil)
+      (rect (- (* (x (the-enemy)) 32) offset-x) (- (* (y (the-enemy)) 32) offset-y) 32 32)
+    )
+  )
+  (setf i (+ i 1))
+  (when (>= i (length enemies))(return))
+  )
   )
   
   (rect 0 0 100 50)
@@ -247,6 +263,10 @@ Press 3 for large maze" 175 333)
   
   (when (= died 1) (over))
   (when (= start-screen 1)(title-screen))
+  
+  (dotimes (int (floor (/ (- (sdl2:get-ticks) last-tick) tickrate)))
+    (tick)
+  )
 )
 
 (defmethod on-key ((sketch mazegame) key state)
