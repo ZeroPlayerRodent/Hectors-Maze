@@ -8,12 +8,9 @@ Is a classic-style arcade maze game with a medieval fantasy theme
 First make sure you have these libraries installed:
 * [Sketch](https://github.com/vydd/sketch)
 * [Harmony](https://github.com/Shirakumo/harmony)
-* [Deploy](https://github.com/Shinmera/deploy)
 
-Then load and run `build-game.lisp` in [SBCL](https://www.sbcl.org/) or another compatible Lisp.
+Then load and run `build-game.lisp` in [SBCL](https://www.sbcl.org/).
 
-This should create a new directory called `bin` with the game executable and shared libraries inside.
-
-Copy or move the `img`, `sfx` and `res` directories to the new `bin` directory.
+This should create a new executable called `hectors-maze`.
 
 Now the game is built! Open the finished executable to play the game.
